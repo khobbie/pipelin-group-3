@@ -16,9 +16,9 @@ jobs:
       - checkout
       - run:
           name: "Say hello"
-          command: mkdir room3 && echo "Hello, World!" >> output.txt
+          command:  echo "Hello, World!" >> output.txt
       - persist_to_workspace:
-          root: ./room3
+          root: .
           paths:
           - .         
           
@@ -32,10 +32,10 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: ./room3
+          at: .
       - run:
           name: "Say hello"
-          command: cat output.txt
+          command: cat ./output.txt
 
 
           
