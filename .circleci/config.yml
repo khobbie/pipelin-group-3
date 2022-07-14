@@ -1,18 +1,41 @@
 version: 2.1
 
+orbs:
+  # Choose either one of the orbs below
+  # Declare a dependency on the welcome-orb
+  # welcome: circleci/welcome-orb@0.4.1
+  aws-cli: circleci/aws-cli@2.0.3
+# Orchestrate or schedule a set of jobs
+
+
 commands:
   print_pipeline_id:
     steps:
       - run: echo ${CIRCLE_WORKFLOW_ID}
 
 jobs:
-  my_job:
+
+  create_infrastructure: 
     docker:
-      - image: circleci/node:13.8.0
+      - image: amazon/aws-cli
     steps:
-      - print_pipeline_id
+      - checkout
+      - run:
+          name: Create Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+              --template-file template.yml \
+              --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
+              --region us-east-1
+      # Fail the job intentionally to simulate an error.
+      # Uncomment the line below if you want to fail the current step
+      # - run: return 1
+      - destroy_environment
+
+
 
 workflows:
   my_workflow:
     jobs:
       - my_job
+      - create_infrastructure
